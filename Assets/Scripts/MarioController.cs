@@ -1,0 +1,217 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
+using UnityEngine.UIElements;
+
+public class MarioController : MonoBehaviour
+{
+    [SerializeField] Transform playerSpriteTransform;
+    [SerializeField] AudioSource audioSource;
+
+    private float currentSpeed = 0;
+    private float maxSpeed = 6f;
+    private readonly float maxSpeedNonHoldingLShift = 6f;
+    private readonly float maxSpeedHoldingLShift = 9f;
+    private float jumpForce = 18.5f;
+    private float timeHoldingLShift = 0;
+    private readonly float timeHoldinglShiftMax = 0.2f;
+
+    private bool isChangingDirection = false;
+    private bool isOnGround = true;
+    private bool isFacingRight = true;
+    private bool isDead = false;
+
+
+    [SerializeField] int level = 0;
+    [SerializeField] bool powerUp = false;
+
+
+    private Rigidbody2D r2d;
+    [SerializeField] Animator animator;
+    // Start is called before the first frame update
+    void Start()
+    {
+        r2d = GetComponent<Rigidbody2D>();
+        r2d.gravityScale = 4f;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        animator.SetFloat("currentSpeed", currentSpeed);
+        animator.SetBool("isOnGround", isOnGround);
+        animator.SetBool("isChangingDirection", isChangingDirection);
+
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
+        {
+            Jump();
+        }
+
+        SprintAndFire();
+
+        if (powerUp)
+        {
+            switch (level)
+            {
+                case 0:
+                    {
+                        StartCoroutine(BecomeSmall());
+                        powerUp = false;
+                        break;
+                    }
+                case 1: 
+                    {
+                        StartCoroutine(BecomeBig());
+                        powerUp = false;
+                        break;
+                    }
+                case 2:
+                    {
+                        StartCoroutine(BecomeSpecial());
+                        powerUp = false;
+                        break;
+                    }
+                default: powerUp = false;
+                break;
+            }
+        }
+
+        if (!isDead && transform.position.y < -7)
+        {
+            r2d.gravityScale = 0f;
+            r2d.Sleep();
+            enabled = false;
+            isDead = true;
+            PlaySound("smb_mariodie");
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        move();
+    }
+
+    void move()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        r2d.velocity = new Vector2(maxSpeed * horizontal, r2d.velocity.y);
+        currentSpeed = Math.Abs(maxSpeed * horizontal);
+        if (horizontal > 0 && !isFacingRight) CheckDirection();
+        if (horizontal < 0 && isFacingRight) CheckDirection();
+    }
+
+    void CheckDirection()
+    {
+        isFacingRight = !isFacingRight;
+        Vector2 direction = playerSpriteTransform.eulerAngles;
+        direction.y += 180f;
+        playerSpriteTransform.eulerAngles = direction;
+        if (currentSpeed > 0 && isOnGround)
+        {
+            StartCoroutine(ChangeDirection());
+        }
+    }
+
+    void Jump()
+    {
+        PlaySound("smb_jump-small");
+        r2d.velocity = new Vector2(r2d.velocity.x, jumpForce);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Ground") || collider.CompareTag("Brick"))
+        {
+            isOnGround = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Ground") || collider.CompareTag("Brick"))
+        {
+            isOnGround = false;
+        }
+    }
+
+    IEnumerator ChangeDirection()
+    {
+        isChangingDirection = true;
+        yield return new WaitForSeconds(0.2f);
+        isChangingDirection = false;
+    }
+
+    void SprintAndFire()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            timeHoldingLShift += Time.deltaTime;
+            if (timeHoldingLShift > timeHoldinglShiftMax)
+            {
+                maxSpeed = maxSpeedHoldingLShift;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            print("shoot!");
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            maxSpeed = maxSpeedNonHoldingLShift;
+            timeHoldingLShift = 0;
+        }
+    }
+
+    IEnumerator BecomeBig()
+    {
+        float delay = 0.1f;
+        PlaySound("smb_powerup");
+        for (int i = 0; i < 3; i++)
+        {
+            animator.SetLayerWeight(animator.GetLayerIndex("Small"), 1);
+            animator.SetLayerWeight(animator.GetLayerIndex("Big"), 0);
+            animator.SetLayerWeight(animator.GetLayerIndex("Special"), 0);
+            yield return new WaitForSeconds(delay);
+            animator.SetLayerWeight(animator.GetLayerIndex("Small"), 0);
+            animator.SetLayerWeight(animator.GetLayerIndex("Big"), 1);
+            animator.SetLayerWeight(animator.GetLayerIndex("Special"), 0);
+            yield return new WaitForSeconds(delay);
+        }
+    }
+
+    IEnumerator BecomeSpecial()
+    {
+        float delay = 0.1f;
+        PlaySound("smb_powerup");
+        animator.SetLayerWeight(animator.GetLayerIndex("Small"), 0);
+        animator.SetLayerWeight(animator.GetLayerIndex("Big"), 0);
+        animator.SetLayerWeight(animator.GetLayerIndex("Special"), 1);
+        yield return new WaitForSeconds(delay);
+    }
+
+    IEnumerator BecomeSmall()
+    {
+        float delay = 0.1f;
+        PlaySound("smb_pipe");
+        for (int i = 0; i < 3; i++)
+        {
+            animator.SetLayerWeight(animator.GetLayerIndex("Small"), 0);
+            animator.SetLayerWeight(animator.GetLayerIndex("Big"), 1);
+            animator.SetLayerWeight(animator.GetLayerIndex("Special"), 0);
+            yield return new WaitForSeconds(delay);
+            animator.SetLayerWeight(animator.GetLayerIndex("Small"), 1);
+            animator.SetLayerWeight(animator.GetLayerIndex("Big"), 0);
+            animator.SetLayerWeight(animator.GetLayerIndex("Special"), 0);
+            yield return new WaitForSeconds(delay);
+        }
+    }
+
+    void PlaySound(string fileAudio)
+    {
+        audioSource.PlayOneShot(Resources.Load<AudioClip>("Audio/" + fileAudio));
+    }
+}

@@ -6,7 +6,8 @@ TagManager:
   tags:
   - Ground
   - Brick
-  - DeathZone
+  - PlayerCollisionBlock
+  - Block
   layers:
   - Default
   - TransparentFX

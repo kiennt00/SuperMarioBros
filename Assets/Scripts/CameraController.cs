@@ -8,11 +8,6 @@ public class CameraController : MonoBehaviour
     private readonly float minCameraPositionX = 3;
     private readonly float maxCameraPositionX = 187;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        playerTransform = GameObject.FindWithTag("Player").transform;
-    }
 
     // Update is called once per frame
     void Update()

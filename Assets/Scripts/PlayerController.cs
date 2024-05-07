@@ -5,10 +5,13 @@ using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.UIElements;
 
-public class MarioController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [SerializeField] Transform playerSpriteTransform;
     [SerializeField] AudioSource audioSource;
+    [SerializeField] CircleCollider2D headCollider;
+    [SerializeField] Rigidbody2D r2d;
+    [SerializeField] Animator animator;
 
     private float currentSpeed = 0;
     private float maxSpeed = 6f;
@@ -23,19 +26,11 @@ public class MarioController : MonoBehaviour
     private bool isFacingRight = true;
     private bool isDead = false;
 
+    public int level = 0;
 
-    [SerializeField] int level = 0;
     [SerializeField] bool powerUp = false;
 
 
-    private Rigidbody2D r2d;
-    [SerializeField] Animator animator;
-    // Start is called before the first frame update
-    void Start()
-    {
-        r2d = GetComponent<Rigidbody2D>();
-        r2d.gravityScale = 4f;
-    }
 
     // Update is called once per frame
     void Update()
@@ -58,12 +53,14 @@ public class MarioController : MonoBehaviour
                 case 0:
                     {
                         StartCoroutine(BecomeSmall());
+                        headCollider.offset = new Vector2(0, 1);
                         powerUp = false;
                         break;
                     }
-                case 1: 
+                case 1:
                     {
                         StartCoroutine(BecomeBig());
+                        headCollider.offset = new Vector2(0, 2);
                         powerUp = false;
                         break;
                     }
@@ -73,8 +70,9 @@ public class MarioController : MonoBehaviour
                         powerUp = false;
                         break;
                     }
-                default: powerUp = false;
-                break;
+                default:
+                    powerUp = false;
+                    break;
             }
         }
 
@@ -120,17 +118,25 @@ public class MarioController : MonoBehaviour
         r2d.velocity = new Vector2(r2d.velocity.x, jumpForce);
     }
 
-    private void OnTriggerEnter2D(Collider2D collider)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collider.CompareTag("Ground") || collider.CompareTag("Brick"))
+        if (collision.CompareTag("Ground") || collision.CompareTag("Brick"))
         {
             isOnGround = true;
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collider)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collider.CompareTag("Ground") || collider.CompareTag("Brick"))
+        if (collision.CompareTag("Ground") || collision.CompareTag("Brick"))
+        {
+            isOnGround = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ground") || collision.CompareTag("Brick"))
         {
             isOnGround = false;
         }
@@ -213,5 +219,20 @@ public class MarioController : MonoBehaviour
     void PlaySound(string fileAudio)
     {
         audioSource.PlayOneShot(Resources.Load<AudioClip>("Audio/" + fileAudio));
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Block"))
+        {
+            if (level == 0)
+            {
+                collision.gameObject.GetComponent<BlockController>().Bounce(false);
+            }
+            else
+            {
+                collision.gameObject.GetComponent<BlockController>().Bounce(true);
+            }
+        }
     }
 }

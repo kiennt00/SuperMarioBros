@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 7066211273972496711}
   - component: {fileID: 2881283468342124038}
   - component: {fileID: 1766129341730924689}
+  - component: {fileID: 4170851629432147328}
   m_Layer: 0
-  m_Name: Brick
-  m_TagString: Brick
+  m_Name: NormalBlock
+  m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,3 +151,21 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
+--- !u!114 &4170851629432147328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4084452506454620077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ac4e81e3d537854d93e63f0a9cae3a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canBounce: 1
+  numberOfBounces: 1
+  bounceSpeed: 0.01
+  bounceHeightDifference: 0.5
+  originalPosition: {x: 0, y: 0, z: 0}
+  blockType: 0

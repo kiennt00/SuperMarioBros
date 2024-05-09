@@ -5,35 +5,29 @@ using UnityEngine;
 
 public class BlockController : MonoBehaviour
 {
-    public bool canBounce = true;
-    public int numberOfBounces = 1;
-    public float bounceSpeed = 0.01f;
-    public float bounceHeightDifference = 0.5f;
+    [SerializeField] int numberOfBounces;
+    private float bounceSpeed = 0.01f;
+    private float bounceHeightDifference = 0.5f;
 
-    public Vector3 originalPosition;
+    private Vector3 originalPosition;
 
     [SerializeField] BlockType blockType;
+    [SerializeField] GameObject emptyBlock;
 
-
-    public void Bounce(bool isBreaking)
+    public void Bounce(int level)
     {
-        if (canBounce)
+        originalPosition = transform.position;
+
+        switch (blockType)
         {
-            if (blockType == BlockType.NormalBlock && !isBreaking)
-            {
-                numberOfBounces++;
-            }
-
-            originalPosition = transform.position;
-            numberOfBounces--;
-
-            if (numberOfBounces == 0)
-            {
-                canBounce = false;
-            }
-
-            StartCoroutine(AnimationBlockBounce());
-
+            case BlockType.NormalBlock:
+                NormalBlockHandle(level);
+                break;
+            case BlockType.ItemBlock:
+                ItemBlockHandle();
+                break;
+            default: 
+                break;
         }
     }
 
@@ -46,28 +40,35 @@ public class BlockController : MonoBehaviour
             yield return null;
         }
 
-        if (blockType == BlockType.NormalBlock && !canBounce)
+        while (true)
+        {
+            transform.position = new Vector2(transform.position.x, transform.position.y - bounceSpeed);
+            if (transform.position.y <= originalPosition.y) break;
+            yield return null;
+        }
+
+        if (numberOfBounces <= 0)
         {
             gameObject.SetActive(false);
-        } 
+            emptyBlock.SetActive(true);
+        }
+    }
+
+    private void NormalBlockHandle (int level)
+    {
+        if (level == 0)
+        {
+            StartCoroutine(AnimationBlockBounce());
+        }
         else
         {
-            while (true)
-            {
-                transform.position = new Vector2(transform.position.x, transform.position.y - bounceSpeed);
-                if (transform.position.y <= originalPosition.y) break;
-                yield return null;
-            }
-        }  
+            gameObject.SetActive(false);
+        }
     }
 
-    public void NormalBlockHandle ()
+    private void ItemBlockHandle ()
     {
-        numberOfBounces++;
-    }
-
-    public void QuestionBlockHandle ()
-    {
-
+        numberOfBounces--;
+        StartCoroutine(AnimationBlockBounce());
     }
 }

@@ -5,8 +5,8 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] Transform playerTransform;
-    private readonly float minCameraPositionX = 3;
-    private readonly float maxCameraPositionX = 187;
+    private readonly float minCameraPositionX = -21;
+    private readonly float maxCameraPositionX = 163;
 
 
     // Update is called once per frame

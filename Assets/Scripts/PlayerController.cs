@@ -7,11 +7,14 @@ using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] Transform playerSpriteTransform;
+    [SerializeField] GameObject playerSprite, playerDeadByEnemy;
     [SerializeField] AudioSource audioSource;
     [SerializeField] CircleCollider2D headCollider;
     [SerializeField] Rigidbody2D r2d;
     [SerializeField] Animator animator;
+    [SerializeField] BoxCollider2D boxCollider;
+
+    [SerializeField] PlayerRaycast playerRaycast;
 
     private float currentSpeed = 0;
     private float maxSpeed = 6f;
@@ -24,17 +27,18 @@ public class PlayerController : MonoBehaviour
     private bool isChangingDirection = false;
     private bool isOnGround = true;
     private bool isFacingRight = true;
-    private bool isDead = false;
+    [SerializeField] bool isTransforming = false;
 
     public int level = 0;
 
-    [SerializeField] bool powerUp = false;
-
+    private Vector3 deadPosition;
 
 
     // Update is called once per frame
     void Update()
     {
+        isOnGround = playerRaycast.isOnGround;
+
         animator.SetFloat("currentSpeed", currentSpeed);
         animator.SetBool("isOnGround", isOnGround);
         animator.SetBool("isChangingDirection", isChangingDirection);
@@ -46,43 +50,34 @@ public class PlayerController : MonoBehaviour
 
         SprintAndFire();
 
-        if (powerUp)
+        if (isTransforming)
         {
             switch (level)
             {
                 case 0:
                     {
-                        StartCoroutine(BecomeSmall());
+                        StartCoroutine(AnimationBecomeSmall());
                         headCollider.offset = new Vector2(0, 1);
-                        powerUp = false;
+                        isTransforming = false;
                         break;
                     }
                 case 1:
                     {
-                        StartCoroutine(BecomeBig());
+                        StartCoroutine(AnimationBecomeBig());
                         headCollider.offset = new Vector2(0, 2);
-                        powerUp = false;
+                        isTransforming = false;
                         break;
                     }
                 case 2:
                     {
-                        StartCoroutine(BecomeSpecial());
-                        powerUp = false;
+                        StartCoroutine(AnimationBecomeSpecial());
+                        isTransforming = false;
                         break;
                     }
                 default:
-                    powerUp = false;
+                    isTransforming = false;
                     break;
             }
-        }
-
-        if (!isDead && transform.position.y < -7)
-        {
-            r2d.gravityScale = 0f;
-            r2d.Sleep();
-            enabled = false;
-            isDead = true;
-            PlaySound("smb_mariodie");
         }
     }
 
@@ -103,9 +98,9 @@ public class PlayerController : MonoBehaviour
     void CheckDirection()
     {
         isFacingRight = !isFacingRight;
-        Vector2 direction = playerSpriteTransform.eulerAngles;
+        Vector2 direction = playerSprite.transform.eulerAngles;
         direction.y += 180f;
-        playerSpriteTransform.eulerAngles = direction;
+        playerSprite.transform.eulerAngles = direction;
         if (currentSpeed > 0 && isOnGround)
         {
             StartCoroutine(ChangeDirection());
@@ -120,25 +115,9 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ground") || collision.CompareTag("Brick"))
+        if (collision.CompareTag("Block"))
         {
-            isOnGround = true;
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Ground") || collision.CompareTag("Brick"))
-        {
-            isOnGround = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Ground") || collision.CompareTag("Brick"))
-        {
-            isOnGround = false;
+            collision.gameObject.GetComponent<BlockController>().Bounce(level);
         }
     }
 
@@ -172,7 +151,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator BecomeBig()
+    IEnumerator AnimationBecomeBig()
     {
         float delay = 0.1f;
         PlaySound("smb_powerup");
@@ -189,7 +168,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator BecomeSpecial()
+    IEnumerator AnimationBecomeSpecial()
     {
         float delay = 0.1f;
         PlaySound("smb_powerup");
@@ -199,7 +178,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(delay);
     }
 
-    IEnumerator BecomeSmall()
+    IEnumerator AnimationBecomeSmall()
     {
         float delay = 0.1f;
         PlaySound("smb_pipe");
@@ -216,23 +195,66 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    IEnumerator AnimationDead()
+    {
+        float speed = 0.015f, height = 2.5f;
+        while (true)
+        {
+            playerDeadByEnemy.transform.position = new Vector2(playerDeadByEnemy.transform.position.x,  playerDeadByEnemy.transform.position.y + speed);
+            if (playerDeadByEnemy.transform.position.y >= deadPosition.y + height) break;
+            yield return null;
+        }
+
+        while (true)
+        {
+            playerDeadByEnemy.transform.position = new Vector2(playerDeadByEnemy.transform.position.x, playerDeadByEnemy.transform.position.y - speed);
+            if (playerDeadByEnemy.transform.position.y <= -3f) break;
+            yield return null;
+        }
+    }
+
     void PlaySound(string fileAudio)
     {
         audioSource.PlayOneShot(Resources.Load<AudioClip>("Audio/" + fileAudio));
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private void DeadByDeadZone()
     {
-        if (collision.collider.CompareTag("Block"))
+        PlaySound("smb_mariodie");
+        enabled = false;
+    }
+
+    private void DeadByOther()
+    {
+        PlaySound("smb_mariodie");
+        enabled = false;
+        r2d.gravityScale = 0f;
+        r2d.Sleep();
+        boxCollider.enabled = !boxCollider.enabled;
+        deadPosition = transform.position;
+        playerSprite.gameObject.SetActive(false);
+        playerDeadByEnemy.gameObject.SetActive(true);
+        StartCoroutine(AnimationDead());
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Enemy"))
         {
             if (level == 0)
             {
-                collision.gameObject.GetComponent<BlockController>().Bounce(false);
+                DeadByOther();
             }
             else
             {
-                collision.gameObject.GetComponent<BlockController>().Bounce(true);
+                level = 0;
+                isTransforming = true;
             }
+        }
+
+        if (collision.collider.CompareTag("DeathZone"))
+        {
+            DeadByDeadZone();
         }
     }
 }

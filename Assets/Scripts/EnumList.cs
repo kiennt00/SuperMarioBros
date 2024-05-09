@@ -5,5 +5,5 @@ using UnityEngine;
 public enum BlockType
 {
     NormalBlock,
-    QuestionBlock
+    ItemBlock,
 }

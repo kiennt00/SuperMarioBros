@@ -239,7 +239,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Enemy"))
+        if (collision.collider.CompareTag("Enemy") && !(collision.contacts[0].normal.y > 0))
         {
             if (level == 0)
             {

@@ -6,10 +6,11 @@ public class AutoMove : MonoBehaviour
 {
     [SerializeField] float moveSpeed = 0.05f;
     [SerializeField] bool isFacingRight = false;
-    [SerializeField] Transform spriteTransform;
+    [SerializeField] GameObject gameObjectTarget;
+
     private void FixedUpdate()
     {
-        Vector2 newPosition = transform.position;
+        Vector2 newPosition = gameObjectTarget.transform.position;
 
         if (isFacingRight)
         {
@@ -20,7 +21,7 @@ public class AutoMove : MonoBehaviour
             newPosition.x -= moveSpeed;
         }
 
-        transform.position = newPosition;
+        gameObjectTarget.transform.position = newPosition;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -34,13 +35,18 @@ public class AutoMove : MonoBehaviour
         {
             ChangeDirection();
         }
+
+        if (collision.collider.CompareTag("Player") && collision.contacts[0].normal.y < 0)
+        {
+            // dead
+        }
     }
 
     void ChangeDirection()
     {
         isFacingRight = !isFacingRight;
-        Vector2 direction = spriteTransform.eulerAngles;
+        Vector2 direction = gameObjectTarget.transform.eulerAngles;
         direction.y += 180f;
-        spriteTransform.eulerAngles = direction;
+        gameObjectTarget.transform.eulerAngles = direction;
     }
 }

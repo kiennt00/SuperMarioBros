@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private bool isChangingDirection = false;
     private bool isOnGround = true;
     private bool isFacingRight = true;
+    private bool isImmune = false;
     [SerializeField] bool isTransforming = false;
 
     public int level = 0;
@@ -56,21 +57,21 @@ public class PlayerController : MonoBehaviour
             {
                 case 0:
                     {
-                        StartCoroutine(AnimationBecomeSmall());
+                        StartCoroutine(IEBecomeSmall());
                         headCollider.offset = new Vector2(0, 1);
                         isTransforming = false;
                         break;
                     }
                 case 1:
                     {
-                        StartCoroutine(AnimationBecomeBig());
+                        StartCoroutine(IEBecomeBig());
                         headCollider.offset = new Vector2(0, 2);
                         isTransforming = false;
                         break;
                     }
                 case 2:
                     {
-                        StartCoroutine(AnimationBecomeSpecial());
+                        StartCoroutine(IEBecomeSpecial());
                         isTransforming = false;
                         break;
                     }
@@ -103,7 +104,7 @@ public class PlayerController : MonoBehaviour
         playerSprite.transform.eulerAngles = direction;
         if (currentSpeed > 0 && isOnGround)
         {
-            StartCoroutine(ChangeDirection());
+            StartCoroutine(IEChangeDirection());
         }
     }
 
@@ -121,7 +122,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator ChangeDirection()
+    IEnumerator IEChangeDirection()
     {
         isChangingDirection = true;
         yield return new WaitForSeconds(0.2f);
@@ -151,7 +152,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator AnimationBecomeBig()
+    IEnumerator IEBecomeBig()
     {
         float delay = 0.1f;
         PlaySound("smb_powerup");
@@ -168,7 +169,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator AnimationBecomeSpecial()
+    IEnumerator IEBecomeSpecial()
     {
         float delay = 0.1f;
         PlaySound("smb_powerup");
@@ -178,7 +179,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(delay);
     }
 
-    IEnumerator AnimationBecomeSmall()
+    IEnumerator IEBecomeSmall()
     {
         float delay = 0.1f;
         PlaySound("smb_pipe");
@@ -195,7 +196,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator AnimationDead()
+    IEnumerator IEDead()
     {
         float speed = 0.015f, height = 2.5f;
         while (true)
@@ -234,13 +235,15 @@ public class PlayerController : MonoBehaviour
         deadPosition = transform.position;
         playerSprite.gameObject.SetActive(false);
         playerDeadByEnemy.gameObject.SetActive(true);
-        StartCoroutine(AnimationDead());
+        StartCoroutine(IEDead());
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.CompareTag("Enemy") && !(collision.contacts[0].normal.y > 0))
         {
+            if (isImmune) return;
+
             if (level == 0)
             {
                 DeadByOther();
@@ -249,12 +252,33 @@ public class PlayerController : MonoBehaviour
             {
                 level = 0;
                 isTransforming = true;
+                StartCoroutine(IEImmune());
             }
+        }
+
+        if (collision.collider.CompareTag("MagicMushroom"))
+        {
+            level = 1;
+            isTransforming = true;
+        }
+
+        if (collision.collider.CompareTag("FireFlower"))
+        {
+            level = 2;
+            isTransforming = true;
         }
 
         if (collision.collider.CompareTag("DeathZone"))
         {
             DeadByDeadZone();
         }
+    }
+
+    IEnumerator IEImmune()
+    {
+        float immuneDuration = 0.5f;
+        isImmune = true;
+        yield return new WaitForSeconds(immuneDuration);
+        isImmune = false;
     }
 }

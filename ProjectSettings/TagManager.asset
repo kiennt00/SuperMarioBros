@@ -9,15 +9,19 @@ TagManager:
   - Block
   - Enemy
   - DeathZone
+  - MagicMushroom
+  - FireFlower
+  - Starman
+  - OneUpMushroom
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - playerLayer
   - Water
   - UI
   - groundLayer
-  - 
+  - enemyLayer
   - 
   - 
   - 

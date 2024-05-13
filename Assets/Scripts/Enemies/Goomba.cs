@@ -6,7 +6,7 @@ using UnityEngine;
 public class Goomba : BaseMove
 {
     [SerializeField] public GameObject objectAlive, objectDead;
-    public IEnumerator AnimationDead()
+    public IEnumerator IEDead()
     {
         objectAlive.SetActive(false);
         objectDead.SetActive(true);
@@ -17,6 +17,6 @@ public class Goomba : BaseMove
     public override void OnDead(bool isRightColliding)
     {
         base.OnDead(isRightColliding);
-        StartCoroutine(AnimationDead());
+        StartCoroutine(IEDead());
     }
 }

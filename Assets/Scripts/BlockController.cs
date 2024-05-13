@@ -14,6 +14,11 @@ public class BlockController : MonoBehaviour
     [SerializeField] BlockType blockType;
     [SerializeField] GameObject emptyBlock;
 
+    [SerializeField] bool coin = false;
+    [SerializeField] bool magicMushroomOrFireFlower = false;
+    [SerializeField] bool starman = false;
+    [SerializeField] bool oneUpMushroom = false;
+
     public void Bounce(int level)
     {
         originalPosition = transform.position;
@@ -24,14 +29,14 @@ public class BlockController : MonoBehaviour
                 NormalBlockHandle(level);
                 break;
             case BlockType.ItemBlock:
-                ItemBlockHandle();
+                ItemBlockHandle(level);
                 break;
             default: 
                 break;
         }
     }
 
-    IEnumerator AnimationBlockBounce()
+    IEnumerator IEBlockBounce()
     {
         while (true)
         {
@@ -58,7 +63,7 @@ public class BlockController : MonoBehaviour
     {
         if (level == 0)
         {
-            StartCoroutine(AnimationBlockBounce());
+            StartCoroutine(IEBlockBounce());
         }
         else
         {
@@ -66,9 +71,44 @@ public class BlockController : MonoBehaviour
         }
     }
 
-    private void ItemBlockHandle ()
+    private void ItemBlockHandle (int level)
     {
         numberOfBounces--;
-        StartCoroutine(AnimationBlockBounce());
+        StartCoroutine(IEBlockBounce());
+
+        if (magicMushroomOrFireFlower)
+        {
+            GameObject item = null;
+            if (level == 0)
+            {
+                item = (GameObject) Instantiate(Resources.Load("Prefabs/Magic Mushroom"));
+            }
+            else
+            {
+                item = (GameObject)Instantiate(Resources.Load("Prefabs/Fire Flower"));
+            }
+            item.transform.SetParent(transform.parent, true);
+            item.transform.position = new Vector2(transform.position.x, transform.position.y + 1f);
+        }
+
+        if (coin)
+        {
+            Coin coin = (Coin)SimplePool.Spawn(PoolType.Coin, transform.position, transform.rotation);
+            coin.coinBounce();
+        }
+
+        if(starman)
+        {
+            GameObject item = (GameObject)Instantiate(Resources.Load("Prefabs/Starman"));
+            item.transform.SetParent(transform.parent, true);
+            item.transform.position = new Vector2(transform.position.x, transform.position.y + 1f);
+        }
+
+        if (oneUpMushroom)
+        {
+            GameObject item = (GameObject)Instantiate(Resources.Load("Prefabs/One Up Mushroom"));
+            item.transform.SetParent(transform.parent, true);
+            item.transform.position = new Vector2(transform.position.x, transform.position.y + 1f);
+        }
     }
 }

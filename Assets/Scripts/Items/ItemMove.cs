@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : BaseMove
+public class ItemMove : BaseMove
 {
     public override void OnDead(bool isRightColliding)
     {

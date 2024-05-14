@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Goomba : BaseMove
+public class GoombaMove : BaseMove
 {
     [SerializeField] public GameObject objectAlive, objectDead;
     public IEnumerator IEDead()

@@ -7,3 +7,12 @@ public enum BlockType
     NormalBlock,
     ItemBlock,
 }
+
+public enum BlockContainItem
+{
+    None,
+    Coin,
+    MagicMushroomOrFireFlower,
+    Starman,
+    OneUpMushroom
+}

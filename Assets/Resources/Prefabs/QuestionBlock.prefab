@@ -50,7 +50,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numberOfBounces: 1
   blockType: 1
-  emptyBlock: {fileID: 0}
+  blockContainItem: 0
+  emptyBlock: {fileID: 715882553637560729, guid: 88cd8ecf5c4e4d3439110a32f4362fbf, type: 3}
+  coin: {fileID: 2858606122505824401, guid: 960ee40175572df4fac1e98454d3d2fb, type: 3}
+  magicMushroom: {fileID: 2969826205950832283, guid: c45140fbeb1a7ea4c82ba8a70289de08, type: 3}
+  fireFlower: {fileID: 1658350067246092687, guid: c329aeac5c5e2134b865086fac36b7f4, type: 3}
+  starman: {fileID: 4946002642740558063, guid: 8343a301c8ba3394e996b7dca79b34ac, type: 3}
+  oneUpMushroom: {fileID: 2621889823963067178, guid: aaedfec4464196e47b1995b6ded2bc32, type: 3}
 --- !u!212 &7619594566518248724
 SpriteRenderer:
   m_ObjectHideFlags: 0

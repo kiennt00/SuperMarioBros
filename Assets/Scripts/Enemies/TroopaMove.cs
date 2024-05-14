@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Troopa : BaseMove
+public class TroopaMove : BaseMove
 {
     [SerializeField] public GameObject objectAlive, objectDead, objectRevive;
     [SerializeField] BoxCollider2D boxCollider;

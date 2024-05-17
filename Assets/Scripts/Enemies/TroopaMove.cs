@@ -106,4 +106,21 @@ public class TroopaMove : BaseMove
             isFacingRight = true;
         }
     }
+
+    public override void OnCollisionEnter2D(Collision2D collision)
+    {
+        base.OnCollisionEnter2D(collision);
+
+        if (collision.collider.CompareTag("Player") && collision.contacts[0].normal.y < 0)
+        {
+            if (collision.contacts[0].normal.x < 0)
+            {
+                OnDead(true);
+            }
+            else
+            {
+                OnDead(false);
+            }
+        }
+    }
 }

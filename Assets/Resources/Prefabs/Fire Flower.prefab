@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 7636456446281261795}
   - component: {fileID: 7561147980411000810}
   - component: {fileID: 3405492812863127165}
-  - component: {fileID: 7784510746436633669}
   m_Layer: 0
   m_Name: Fire Flower
   m_TagString: FireFlower
@@ -197,16 +196,3 @@ MonoBehaviour:
   moveSpeed: 0.05
   isFacingRight: 0
   isDead: 1
---- !u!114 &7784510746436633669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1658350067246092687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04ff3be88f7715c44a3c3c777b038425, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseMove: {fileID: 3405492812863127165}

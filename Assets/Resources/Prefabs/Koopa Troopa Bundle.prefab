@@ -286,7 +286,6 @@ GameObject:
   - component: {fileID: 812437694496469764}
   - component: {fileID: 7087268085240087688}
   - component: {fileID: 3536238554140076623}
-  - component: {fileID: 1596625163672111849}
   m_Layer: 0
   m_Name: Koopa Troopa Bundle
   m_TagString: Enemy
@@ -404,16 +403,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.5}
   m_EdgeRadius: 0
---- !u!114 &1596625163672111849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6809039577674328832}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b216f26fb629eae4e8f45b5bec2d8385, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseMove: {fileID: 812437694496469764}

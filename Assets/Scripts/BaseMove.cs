@@ -36,8 +36,26 @@ public class BaseMove : MonoBehaviour
         gameObject.transform.eulerAngles = direction;
     }
 
+    public virtual void OnDead()
+    {
+        isDead = true;
+    }
+
     public virtual void OnDead(bool isRightColliding)
     {
         isDead = true;
+    }
+
+    public virtual void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("DeathZone"))
+        {
+            Destroy(gameObject);
+        }
+
+        if ((collision.contacts[0].normal.x > 0 || collision.contacts[0].normal.x < 0) && !collision.collider.CompareTag("Player"))
+        {
+            ChangeDirection();
+        }
     }
 }

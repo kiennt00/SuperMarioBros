@@ -4,9 +4,19 @@ using UnityEngine;
 
 public class ItemMove : BaseMove
 {
-    public override void OnDead(bool isRightColliding)
+    public override void OnDead()
     {
-        base.OnDead(isRightColliding);
+        base.OnDead();
         Destroy(gameObject);
+    }
+
+    public override void OnCollisionEnter2D(Collision2D collision)
+    {
+        base.OnCollisionEnter2D(collision);
+
+        if (collision.collider.CompareTag("Player"))
+        {
+            OnDead();
+        }
     }
 }

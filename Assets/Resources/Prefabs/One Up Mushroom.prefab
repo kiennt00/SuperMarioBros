@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 8648700917968180687}
   - component: {fileID: 8275676441434774981}
   - component: {fileID: 5573210616146184463}
-  - component: {fileID: 4893244343441588611}
   m_Layer: 0
   m_Name: One Up Mushroom
   m_TagString: OneUpMushroom
@@ -175,16 +174,3 @@ MonoBehaviour:
   moveSpeed: 0.05
   isFacingRight: 1
   isDead: 0
---- !u!114 &4893244343441588611
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2621889823963067178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04ff3be88f7715c44a3c3c777b038425, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseMove: {fileID: 5573210616146184463}

@@ -11,6 +11,7 @@ public class Coin : GameUnit
     private Vector3 originalPosition;
     public void coinBounce()
     {
+        UIManager.Ins.GetUI<UIGameplay>().AddScore(200);
         originalPosition = transform.position;
         StartCoroutine(IECoinBounce());
     } 

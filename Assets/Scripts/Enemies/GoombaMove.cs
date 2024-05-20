@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class GoombaMove : BaseMove
+public class GoombaMove : BaseMove, IDeadByTroopa
 {
     [SerializeField] GameObject objectAlive, objectDead;
     [SerializeField] BoxCollider2D boxCollider2D;
@@ -40,5 +40,11 @@ public class GoombaMove : BaseMove
         {
             firstSeen = true;
         }
+    }
+
+    public void OnDeadByTroopa()
+    {
+        UIManager.Ins.GetUI<UIGameplay>().AddScore(100);
+        Destroy(gameObject);
     }
 }

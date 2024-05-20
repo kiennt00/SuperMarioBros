@@ -225,7 +225,7 @@ public class PlayerController : MonoBehaviour
         enabled = false;
     }
 
-    private void DeadByOther()
+    private void OnDead()
     {
         PlaySound("smb_mariodie");
         enabled = false;
@@ -246,7 +246,7 @@ public class PlayerController : MonoBehaviour
 
             if (level == 0)
             {
-                DeadByOther();
+                OnDead();
             }
             else
             {

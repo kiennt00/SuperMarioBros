@@ -126,6 +126,16 @@ public class TroopaMove : BaseMove
                 OnDead(false);
             }
         }
+
+        if (!canRevive)
+        {
+            var deadByTroopa = collision.gameObject.GetComponent<IDeadByTroopa>();
+            if (deadByTroopa != null)
+            {
+                deadByTroopa.OnDeadByTroopa();
+                ChangeDirection();
+            }
+        }
     }
 
     private void Update()

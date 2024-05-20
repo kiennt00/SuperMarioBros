@@ -28,9 +28,9 @@ public class PlayerController : MonoBehaviour
     private bool isOnGround = true;
     private bool isFacingRight = true;
     private bool isImmune = false;
-    [SerializeField] bool isTransforming = false;
+    private bool isTransforming = false;
 
-    public int level = 0;
+    private int level = 0;
 
     private Vector3 deadPosition;
 

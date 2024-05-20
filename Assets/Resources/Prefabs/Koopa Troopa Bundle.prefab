@@ -323,14 +323,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a12470a767a3734b8f332ea7f639bb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0.05
   isFacingRight: 0
-  isDead: 0
   objectAlive: {fileID: 2335775263220079721}
   objectDead: {fileID: 1908658326700745866}
   objectRevive: {fileID: 5411389648571026997}
   boxCollider: {fileID: 3536238554140076623}
-  canRevive: 1
 --- !u!50 &7087268085240087688
 Rigidbody2D:
   serializedVersion: 4

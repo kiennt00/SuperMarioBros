@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class TroopaMove : BaseMove
 {
-    [SerializeField] public GameObject objectAlive, objectDead, objectRevive;
+    [SerializeField] GameObject objectAlive, objectDead, objectRevive;
     [SerializeField] BoxCollider2D boxCollider;
     float reviveTime = 10f, firstTouchTime, duration;
 
-    public bool canRevive = true;
+    private bool canRevive = true;
 
     Coroutine coroutine;
 
-    public override void FixedUpdate()
+    protected override void FixedUpdate()
     {
         base.FixedUpdate();
 
@@ -34,7 +34,7 @@ public class TroopaMove : BaseMove
         }
     }
 
-    public override void OnDead(bool isRightColliding)
+    protected override void OnDead(bool isRightColliding)
     {
         base.OnDead(isRightColliding);
         if (canRevive)
@@ -61,7 +61,7 @@ public class TroopaMove : BaseMove
         }
     }
 
-    public IEnumerator IEDead()
+    IEnumerator IEDead()
     {
         objectAlive.SetActive(false);
         objectDead.SetActive(true);
@@ -74,7 +74,7 @@ public class TroopaMove : BaseMove
         coroutine = StartCoroutine(IERevive());
     }
 
-    public IEnumerator IERevive()
+    IEnumerator IERevive()
     {
         objectDead.SetActive(false);
         objectRevive.SetActive(true);
@@ -93,8 +93,10 @@ public class TroopaMove : BaseMove
         isDead = false;
     }
 
-    public void AfterDeadHandle(bool isRightColliding)
+    void AfterDeadHandle(bool isRightColliding)
     {
+        UIManager.Ins.GetUI<UIGameplay>().AddScore(100);
+
         canRevive = false;
 
         if (isRightColliding)
@@ -107,12 +109,14 @@ public class TroopaMove : BaseMove
         }
     }
 
-    public override void OnCollisionEnter2D(Collision2D collision)
+    protected override void OnCollisionEnter2D(Collision2D collision)
     {
         base.OnCollisionEnter2D(collision);
 
         if (collision.collider.CompareTag("Player") && collision.contacts[0].normal.y < 0)
         {
+            UIManager.Ins.GetUI<UIGameplay>().AddScore(100);
+
             if (collision.contacts[0].normal.x < 0)
             {
                 OnDead(true);
@@ -121,6 +125,14 @@ public class TroopaMove : BaseMove
             {
                 OnDead(false);
             }
+        }
+    }
+
+    private void Update()
+    {
+        if (!firstSeen && CameraController.Ins.RightPoint > transform.position.x)
+        {
+            firstSeen = true;
         }
     }
 }

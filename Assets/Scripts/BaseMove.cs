@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class BaseMove : MonoBehaviour
 {
-    [SerializeField] public float moveSpeed = 0.05f;
-    [SerializeField] public bool isFacingRight = false;
+    protected float moveSpeed = 0.05f;
+    [SerializeField ]protected bool isFacingRight = false;
 
-    public bool isDead = false;
+    protected bool isDead = false;
+    [SerializeField] protected bool firstSeen = false;
 
-    public virtual void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
-        if (!isDead)
+        if (!isDead && firstSeen)
         {
             Vector2 newPosition = gameObject.transform.position;
 
@@ -28,7 +29,7 @@ public class BaseMove : MonoBehaviour
         }
     }
 
-    public virtual void ChangeDirection()
+    protected virtual void ChangeDirection()
     {
         isFacingRight = !isFacingRight;
         Vector2 direction = gameObject.transform.eulerAngles;
@@ -36,17 +37,17 @@ public class BaseMove : MonoBehaviour
         gameObject.transform.eulerAngles = direction;
     }
 
-    public virtual void OnDead()
+    protected virtual void OnDead()
     {
         isDead = true;
     }
 
-    public virtual void OnDead(bool isRightColliding)
+    protected virtual void OnDead(bool isRightColliding)
     {
         isDead = true;
     }
 
-    public virtual void OnCollisionEnter2D(Collision2D collision)
+    protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.CompareTag("DeathZone"))
         {

@@ -48,9 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc0aae25ca8ada94286930b49d22d2e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0.05
   isFacingRight: 0
-  isDead: 0
   objectAlive: {fileID: 8290875189253463708}
   objectDead: {fileID: 6457727761528347262}
   boxCollider2D: {fileID: 5574925053782158779}

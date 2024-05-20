@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class ItemMove : BaseMove
 {
-    public override void OnDead()
+    protected override void OnDead()
     {
         base.OnDead();
+        UIManager.Ins.GetUI<UIGameplay>().AddScore(1000);
         Destroy(gameObject);
     }
 
-    public override void OnCollisionEnter2D(Collision2D collision)
+    protected override void OnCollisionEnter2D(Collision2D collision)
     {
         base.OnCollisionEnter2D(collision);
 

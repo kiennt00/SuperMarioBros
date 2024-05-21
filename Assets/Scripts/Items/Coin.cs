@@ -5,13 +5,14 @@ using UnityEngine;
 
 public class Coin : GameUnit
 {
-    private float bounceSpeed = 0.01f;
+    private float bounceSpeed = 0.015f;
     private float bounceHeightDifference = 3f;
 
     private Vector3 originalPosition;
     public void coinBounce()
     {
         UIManager.Ins.GetUI<UIGameplay>().AddScore(200);
+        UIManager.Ins.GetUI<UIGameplay>().AddCoins(1);
         originalPosition = transform.position;
         StartCoroutine(IECoinBounce());
     } 

@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     private readonly float maxSpeedNonHoldingLShift = 6f;
     private readonly float maxSpeedHoldingLShift = 9f;
     private float jumpForce = 18.5f;
+    private float jumpForceStepOnEnemy = 4.5f;
     private float timeHoldingLShift = 0;
     private readonly float timeHoldinglShiftMax = 0.2f;
 
@@ -225,7 +226,7 @@ public class PlayerController : MonoBehaviour
         enabled = false;
     }
 
-    private void OnDead()
+    private void DeadByOther()
     {
         PlaySound("smb_mariodie");
         enabled = false;
@@ -240,37 +241,53 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Enemy") && !(collision.contacts[0].normal.y > 0))
+        if (collision.collider.CompareTag("Enemy"))
         {
-            if (isImmune) return;
-
-            if (level == 0)
+            if (collision.contacts[0].normal.y > 0)
             {
-                OnDead();
+                r2d.velocity = new Vector2(r2d.velocity.x, jumpForceStepOnEnemy);
             }
             else
             {
-                level = 0;
-                isTransforming = true;
-                StartCoroutine(IEImmune());
+                if (isImmune) return;
+
+                if (level == 0)
+                {
+                    DeadByOther();
+                    UIManager.Ins.GetUI<UIGameplay>().RemoveLives(1);
+                }
+                else
+                {
+                    level = 0;
+                    isTransforming = true;
+                    StartCoroutine(IEImmune());
+                }
             }
         }
 
         if (collision.collider.CompareTag("MagicMushroom"))
         {
             level = 1;
-            isTransforming = true;
+            isTransforming = true;          
+            UIManager.Ins.GetUI<UIGameplay>().AddScore(1000);
         }
 
         if (collision.collider.CompareTag("FireFlower"))
         {
             level = 2;
             isTransforming = true;
+            UIManager.Ins.GetUI<UIGameplay>().AddScore(1000);
+        }
+
+        if (collision.collider.CompareTag("OneUpMushroom"))
+        {
+            UIManager.Ins.GetUI<UIGameplay>().AddLives(1);
         }
 
         if (collision.collider.CompareTag("DeathZone"))
         {
             DeadByDeadZone();
+            UIManager.Ins.GetUI<UIGameplay>().RemoveLives(1);
         }
     }
 

@@ -7,7 +7,6 @@ public class ItemMove : BaseMove
     protected override void OnDead()
     {
         base.OnDead();
-        UIManager.Ins.GetUI<UIGameplay>().AddScore(1000);
         Destroy(gameObject);
     }
 
